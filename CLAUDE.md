@@ -1,6 +1,6 @@
 # homebrew-tap
 
-MC-Vector（Minecraft サーバー管理デスクトップアプリ）の Homebrew Cask を管理するリポジトリ。
+tukuyomil032の Homebrew Cask及びscoop を管理するリポジトリ。
 
 ## プロジェクト構造
 
