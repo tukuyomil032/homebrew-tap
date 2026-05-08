@@ -19,9 +19,13 @@ jobs:
 
       - name: Bump cask PR if new version found
         run: |
-          RESULT=$(brew livecheck --cask tukuyomil032/tap/mc-vector --verbose 2>&1 || true)
-          echo "$RESULT"
-          if echo "$RESULT" | grep -q '==>'; then
+          LIVECHECK=$(brew livecheck --cask tukuyomil032/tap/mc-vector --json 2>/dev/null || echo '[]')
+          echo "Livecheck: $LIVECHECK"
+          CURRENT=$(echo "$LIVECHECK" | jq -r '.[0].version.current // ""')
+          LATEST=$(echo "$LIVECHECK" | jq -r '.[0].version.latest // ""')
+          echo "Current: $CURRENT, Latest: $LATEST"
+          if [ -n "$LATEST" ] && [ "$CURRENT" != "$LATEST" ]; then
+            echo "New version $LATEST found, bumping cask PR..."
             brew bump-cask-pr tukuyomil032/tap/mc-vector --no-browse || true
           else
             echo "No new version found, skipping bump-cask-pr."
