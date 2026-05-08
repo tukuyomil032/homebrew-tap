@@ -18,7 +18,7 @@ jobs:
       - uses: Homebrew/actions/setup-homebrew@master
 
       - name: Tap this repository
-        run: brew tap tukuyomil032/mcvector $(pwd)
+        run: brew tap tukuyomil032/tap $(pwd)
 
       - name: Bump cask PR if new version found
         run: |
