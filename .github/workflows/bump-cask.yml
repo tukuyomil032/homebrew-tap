@@ -1,0 +1,29 @@
+name: Bump Cask
+
+on:
+  schedule:
+    - cron: '0 */6 * * *'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+  pull-requests: write
+
+jobs:
+  bump:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: Homebrew/actions/setup-homebrew@master
+
+      - name: Tap this repository
+        run: brew tap tukuyomil032/mcvector $(pwd)
+
+      - name: Bump cask PR if new version found
+        run: |
+          brew livecheck --cask mc-vector --verbose || true
+          brew bump-cask-pr mc-vector --no-browse || true
+        env:
+          HOMEBREW_GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          HOMEBREW_NO_AUTO_UPDATE: 1
