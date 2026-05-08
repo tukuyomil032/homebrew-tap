@@ -1,0 +1,61 @@
+name: Update Scoop Bucket
+
+on:
+  schedule:
+    - cron: '0 */6 * * *'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  update:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Get latest release version
+        id: latest
+        run: |
+          LATEST=$(curl -fsSL \
+            -H "Authorization: Bearer ${{ secrets.GITHUB_TOKEN }}" \
+            "https://api.github.com/repos/tukuyomil032/MC-Vector/releases/latest" \
+            | jq -r '.tag_name | ltrimstr("v")')
+          echo "version=$LATEST" >> "$GITHUB_OUTPUT"
+
+      - name: Get current version in manifest
+        id: current
+        run: |
+          CURRENT=$(jq -r '.version' bucket/mc-vector.json)
+          echo "version=$CURRENT" >> "$GITHUB_OUTPUT"
+
+      - name: Compute SHA256 of new installer
+        if: steps.latest.outputs.version != steps.current.outputs.version
+        id: hash
+        run: |
+          VERSION="${{ steps.latest.outputs.version }}"
+          URL="https://github.com/tukuyomil032/MC-Vector/releases/download/v${VERSION}/MC-Vector_${VERSION}_windows-x86_64-setup.exe"
+          SHA256=$(curl -fsSL "$URL" | sha256sum | awk '{ print $1 }')
+          echo "sha256=$SHA256" >> "$GITHUB_OUTPUT"
+          echo "url=$URL" >> "$GITHUB_OUTPUT"
+
+      - name: Update manifest
+        if: steps.latest.outputs.version != steps.current.outputs.version
+        run: |
+          VERSION="${{ steps.latest.outputs.version }}"
+          SHA256="${{ steps.hash.outputs.sha256 }}"
+          URL="${{ steps.hash.outputs.url }}"
+          jq \
+            --arg version "$VERSION" \
+            --arg hash "$SHA256" \
+            --arg url "$URL" \
+            '.version = $version | .hash = $hash | .url = $url' \
+            bucket/mc-vector.json > bucket/mc-vector.json.tmp
+          mv bucket/mc-vector.json.tmp bucket/mc-vector.json
+
+      - name: Commit changes
+        if: steps.latest.outputs.version != steps.current.outputs.version
+        uses: stefanzweifel/git-auto-commit-action@v5
+        with:
+          commit_message: "chore: bump scoop mc-vector to v${{ steps.latest.outputs.version }}"
+          file_pattern: bucket/mc-vector.json
