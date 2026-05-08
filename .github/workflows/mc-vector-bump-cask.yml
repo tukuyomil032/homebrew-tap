@@ -19,8 +19,13 @@ jobs:
 
       - name: Bump cask PR if new version found
         run: |
-          brew livecheck --cask tukuyomil032/tap/mc-vector --verbose || true
-          brew bump-cask-pr tukuyomil032/tap/mc-vector --no-browse || true
+          RESULT=$(brew livecheck --cask tukuyomil032/tap/mc-vector --verbose 2>&1 || true)
+          echo "$RESULT"
+          if echo "$RESULT" | grep -q '==>'; then
+            brew bump-cask-pr tukuyomil032/tap/mc-vector --no-browse || true
+          else
+            echo "No new version found, skipping bump-cask-pr."
+          fi
         env:
           HOMEBREW_GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           HOMEBREW_NO_AUTO_UPDATE: 1
