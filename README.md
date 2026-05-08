@@ -1,33 +1,43 @@
-# homebrew-tap
+# tukuyomil032/tap
 
-Homebrew tap and Scoop bucket for [MC-Vector](https://github.com/tukuyomil032/MC-Vector) — Minecraft server management desktop app.
+Homebrew tap and Scoop bucket for tukuyomil032's apps.
 
 ## macOS (Homebrew)
 
 ```bash
 brew tap tukuyomil032/tap
-brew install --cask mc-vector
 ```
+
+### Available Casks
+
+| App | Install |
+|-----|---------|
+| [MC-Vector](https://github.com/tukuyomil032/MC-Vector) — Minecraft server management desktop app | `brew install --cask mc-vector` |
 
 ### Uninstall
 
 ```bash
-brew uninstall mc-vector
-brew untap tukuyomil032/tap
+brew uninstall <app>
+brew untap tukuyomil032/tap  # すべてのアプリをアンインストール後
 ```
 
 ## Windows (Scoop)
 
 ```powershell
-scoop bucket add tap https://github.com/tukuyomil032/homebrew-tap
-scoop install mc-vector
+scoop bucket add tukuyomil032 https://github.com/tukuyomil032/homebrew-tap
 ```
+
+### Available Apps
+
+| App | Install |
+|-----|---------|
+| [MC-Vector](https://github.com/tukuyomil032/MC-Vector) — Minecraft server management desktop app | `scoop install mc-vector` |
 
 ### Uninstall
 
 ```powershell
-scoop uninstall mc-vector
-scoop bucket rm tap
+scoop uninstall <app>
+scoop bucket rm tukuyomil032  # すべてのアプリをアンインストール後
 ```
 
 ## Note
