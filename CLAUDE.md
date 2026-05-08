@@ -6,9 +6,13 @@ tukuyomil032の Homebrew Cask及びscoop を管理するリポジトリ。
 
 ```
 homebrew-tap/
-├── .github/workflows/bump-cask.yml  # バージョン自動更新ワークフロー
+├── .github/workflows/
+│   ├── bump-cask.yml                # Homebrew バージョン自動更新ワークフロー
+│   └── update-scoop.yml             # Scoop バージョン自動更新ワークフロー
 ├── Casks/
 │   └── mc-vector.rb                 # Homebrew Cask 定義
+├── bucket/
+│   └── mc-vector.json               # Scoop マニフェスト定義
 ├── Gemfile / Gemfile.lock           # rubocop の依存管理（Bundler）
 ├── package.json / bun.lock          # lefthook の依存管理（Bun）
 ├── lefthook.yml                     # Git フック設定
@@ -34,10 +38,17 @@ just install && just setup
 - rubocop で静的解析を実施（`bundle exec rubocop`）
 - Homebrew 公式の Cask DSL に準拠
 
+### Scoop マニフェスト（bucket/*.json）
+
+- JSON フォーマットで記述（インデント2スペース）
+- `version` / `url` / `hash` の3フィールドは `update-scoop.yml` により自動更新される
+- `installer.script` / `uninstaller.script` は PowerShell 配列で記述
+- JSON の更新は `jq` コマンドを使用（直接編集は避ける）
+
 ### バージョン更新
 
-- GitHub Actions（`bump-cask.yml`）が6時間ごとに `brew livecheck` を実行
-- 新バージョン検出時は `brew bump-cask-pr` で PR を自動作成
+- **macOS**: GitHub Actions（`bump-cask.yml`）が6時間ごとに `brew livecheck` を実行、新バージョン検出時は `brew bump-cask-pr` で PR を自動作成
+- **Windows**: GitHub Actions（`update-scoop.yml`）が6時間ごとに GitHub Releases API を確認、新バージョン検出時は `bucket/mc-vector.json` を直接更新し `main` へコミット
 
 ## よく使うコマンド
 
