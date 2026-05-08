@@ -1,14 +1,14 @@
-cask "mc-vector" do
-  arch arm: "aarch64", intel: "x64"
+cask 'mc-vector' do
+  arch arm: 'aarch64', intel: 'x64'
 
-  version "2.0.54"
-  sha256 arm:   "39250a97ec7b473ad28c3279f2e3275273631c9d7c44efcaf45ff5014b4ee221",
-         intel: "9843683ddcdb48e79150a846f9cbd215cd848cc08d1184e095ebb515d279f29f"
+  version '2.0.54'
+  sha256 arm: '39250a97ec7b473ad28c3279f2e3275273631c9d7c44efcaf45ff5014b4ee221',
+         intel: '9843683ddcdb48e79150a846f9cbd215cd848cc08d1184e095ebb515d279f29f'
 
   url "https://github.com/tukuyomil032/MC-Vector/releases/download/v#{version}/MC-Vector_#{version}_#{arch}.dmg"
-  name "MC-Vector"
-  desc "Minecraft server management desktop app"
-  homepage "https://github.com/tukuyomil032/MC-Vector"
+  name 'MC-Vector'
+  desc 'Minecraft server management desktop app'
+  homepage 'https://github.com/tukuyomil032/MC-Vector'
 
   livecheck do
     url :url
@@ -17,13 +17,13 @@ cask "mc-vector" do
 
   auto_updates true
 
-  app "MC-Vector.app"
+  app 'MC-Vector.app'
 
   zap trash: [
-    "~/Library/Application Support/com.tukuyomi032.mcvector",
-    "~/Library/Caches/com.tukuyomi032.mcvector",
-    "~/Library/Logs/MC-Vector",
-    "~/Library/Preferences/com.tukuyomi032.mcvector.plist",
+    '~/Library/Application Support/com.tukuyomi032.mcvector',
+    '~/Library/Caches/com.tukuyomi032.mcvector',
+    '~/Library/Logs/MC-Vector',
+    '~/Library/Preferences/com.tukuyomi032.mcvector.plist'
   ]
 
   caveats <<~EOS
