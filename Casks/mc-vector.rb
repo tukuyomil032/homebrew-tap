@@ -11,7 +11,7 @@ cask 'mc-vector' do
   homepage 'https://github.com/tukuyomil032/MC-Vector'
 
   livecheck do
-    url :url
+    url 'https://github.com/tukuyomil032/MC-Vector'
     strategy :github_latest
   end
 
