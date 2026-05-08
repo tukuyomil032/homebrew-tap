@@ -1,4 +1,4 @@
-# homebrew-mcvector
+# homebrew-tap
 
 Homebrew tap and Scoop bucket for [MC-Vector](https://github.com/tukuyomil032/MC-Vector) — Minecraft server management desktop app.
 
