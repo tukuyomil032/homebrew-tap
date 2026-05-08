@@ -1,0 +1,7 @@
+{
+  "name": "homebrew-tap",
+  "private": true,
+  "devDependencies": {
+    "lefthook": "^2.1.6"
+  }
+}
