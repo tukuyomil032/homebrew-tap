@@ -1,4 +1,4 @@
-name: Update Scoop Bucket
+name: Update Scoop Bucket (mc-vector)
 
 on:
   schedule:
