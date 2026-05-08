@@ -1,0 +1,26 @@
+AllCops:
+  TargetRubyVersion: 3.1
+  NewCops: disable
+  Include:
+    - "Casks/**/*.rb"
+  Exclude:
+    - "vendor/**/*"
+
+Style/StringLiterals:
+  Enabled: true
+  EnforcedStyle: single_quotes
+
+Metrics/BlockLength:
+  Enabled: false
+
+Layout/LineLength:
+  Max: 200
+
+Layout/HashAlignment:
+  Enabled: false
+
+Style/FrozenStringLiteralComment:
+  Enabled: false
+
+Naming/HeredocDelimiterNaming:
+  Enabled: false
