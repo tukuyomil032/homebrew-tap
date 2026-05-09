@@ -1,0 +1,36 @@
+name: Bump Cask (glance)
+
+on:
+  schedule:
+    - cron: '0 */6 * * *'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+  pull-requests: write
+
+jobs:
+  bump:
+    runs-on: macos-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: Homebrew/actions/setup-homebrew@503c7f3bf65dfaeed2a1609f9446824e354c3370
+
+      - name: Bump cask PR if new version found
+        run: |
+          set -euo pipefail
+          LIVECHECK=$(brew livecheck --cask tukuyomil032/tap/glance --json)
+          echo "Livecheck: $LIVECHECK"
+          CURRENT=$(echo "$LIVECHECK" | jq -r '.[0].version.current // ""')
+          LATEST=$(echo "$LIVECHECK" | jq -r '.[0].version.latest // ""')
+          echo "Current: $CURRENT, Latest: $LATEST"
+          if [ -n "$LATEST" ] && [ "$CURRENT" != "$LATEST" ]; then
+            echo "New version $LATEST found, bumping cask PR..."
+            brew bump-cask-pr tukuyomil032/tap/glance --no-browse
+          else
+            echo "No new version found, skipping bump-cask-pr."
+          fi
+        env:
+          HOMEBREW_GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          HOMEBREW_NO_AUTO_UPDATE: 1

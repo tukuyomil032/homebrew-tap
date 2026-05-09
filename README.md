@@ -13,6 +13,7 @@ brew tap tukuyomil032/tap
 | App | Install |
 |-----|---------|
 | [MC-Vector](https://github.com/tukuyomil032/MC-Vector) — Minecraft server management desktop app | `brew install --cask mc-vector` |
+| [glance](https://github.com/tukuyomil032/Glance) — Quick Look extension for rendered Markdown previews | `brew install --cask glance` |
 
 ### Uninstall
 
@@ -44,3 +45,6 @@ scoop bucket rm tukuyomil032  # すべてのアプリをアンインストール
 
 MC-Vector is ad-hoc signed (not notarized by Apple).
 If macOS Gatekeeper blocks the app on first launch, right-click `MC-Vector.app` → Open → Open anyway.
+
+glance is not notarized by Apple.
+After installing, launch `glance.app` once, enable it in System Settings → Privacy & Security → Extensions → Quick Look, then run `qlmanage -r` if Finder does not pick it up.
