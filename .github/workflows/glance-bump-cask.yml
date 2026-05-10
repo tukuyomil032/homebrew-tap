@@ -27,7 +27,7 @@ jobs:
           echo "Current: $CURRENT, Latest: $LATEST"
           if [ -n "$LATEST" ] && [ "$CURRENT" != "$LATEST" ]; then
             echo "New version $LATEST found, bumping cask PR..."
-            brew bump-cask-pr tukuyomil032/tap/glance --no-browse
+            brew bump-cask-pr tukuyomil032/tap/glance --version "$LATEST" --no-browse
           else
             echo "No new version found, skipping bump-cask-pr."
           fi
