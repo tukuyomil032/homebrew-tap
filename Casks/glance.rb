@@ -1,35 +1,35 @@
-cask 'glance' do
-  arch arm: 'arm64', intel: 'x86_64'
+cask "glance" do
+  arch arm: "arm64", intel: "x86_64"
 
-  version '1.0'
-  sha256 arm: 'd50265d49278dc46a9f362f6eed770847dd71d15ad6f35e6f4bb2681cd4e0d28',
-         intel: 'e9a2e7ada85961502c51458d644ad5fd7a479bac1d7bef576b576eeed27020bf'
+  version "1.01"
+  sha256 arm:   "ac9d11ef976f9f755d3da190a33ca34d48dc41aac368526250a3a230307492b1",
+         intel: "0a353b679375764a7ca7dd781840e7c5ce7048549de0e71647251d888827e5ca"
 
   url "https://github.com/tukuyomil032/Glance/releases/download/v#{version}/glance-#{version}-#{arch}.dmg" do |asset_url|
     asset_name = File.basename(asset_url)
     release = GitHub::API.open_rest("https://api.github.com/repos/tukuyomil032/Glance/releases/tags/v#{version}")
-    asset = release.fetch('assets', []).find { |a| a['name'] == asset_name }
-    [asset['url'], { header: ['Accept: application/octet-stream',
+    asset = release.fetch("assets", []).find { |a| a["name"] == asset_name }
+    [asset["url"], { header: ["Accept: application/octet-stream",
                               "Authorization: bearer #{GitHub::API.credentials}"] }]
   end
-  name 'glance'
-  desc 'Quick Look extension for rendered Markdown previews'
-  homepage 'https://github.com/tukuyomil032/Glance'
+  name "glance"
+  desc "Quick Look extension for rendered Markdown previews"
+  homepage "https://github.com/tukuyomil032/Glance"
 
   livecheck do
-    url 'https://github.com/tukuyomil032/Glance'
+    url "https://github.com/tukuyomil032/Glance"
     strategy :github_latest
   end
 
-  depends_on macos: '>= :tahoe'
+  depends_on macos: ">= :tahoe"
 
-  app 'glance.app'
+  app "glance.app"
 
   zap trash: [
-    '~/Library/Application Support/com.tukuyomi032.glance',
-    '~/Library/Caches/com.tukuyomi032.glance',
-    '~/Library/Group Containers/group.com.tukuyomi032.glance',
-    '~/Library/Preferences/com.tukuyomi032.glance.plist'
+    "~/Library/Application Support/com.tukuyomi032.glance",
+    "~/Library/Caches/com.tukuyomi032.glance",
+    "~/Library/Group Containers/group.com.tukuyomi032.glance",
+    "~/Library/Preferences/com.tukuyomi032.glance.plist",
   ]
 
   caveats <<~EOS
