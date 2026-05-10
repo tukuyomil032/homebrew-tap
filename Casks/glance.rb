@@ -1,9 +1,9 @@
 cask "glance" do
   arch arm: "arm64", intel: "x86_64"
 
-  version "1.01"
-  sha256 arm:   "ac9d11ef976f9f755d3da190a33ca34d48dc41aac368526250a3a230307492b1",
-         intel: "0a353b679375764a7ca7dd781840e7c5ce7048549de0e71647251d888827e5ca"
+  version "1.02"
+  sha256 arm:   "c96e9250d6379247e549a3af2d45f8059f5b765aa3ae1230bcd37f82589928b8",
+         intel: "3e76fbac95a7681f27876c2ea7acad405643838d7fa18f6ab2aeb459ecc2c457"
 
   url "https://github.com/tukuyomil032/Glance/releases/download/v#{version}/glance-#{version}-#{arch}.dmg" do |asset_url|
     asset_name = File.basename(asset_url)
