@@ -5,7 +5,13 @@ cask 'glance' do
   sha256 arm: 'd50265d49278dc46a9f362f6eed770847dd71d15ad6f35e6f4bb2681cd4e0d28',
          intel: 'e9a2e7ada85961502c51458d644ad5fd7a479bac1d7bef576b576eeed27020bf'
 
-  url "https://github.com/tukuyomil032/Glance/releases/download/v#{version}/glance-#{version}-#{arch}.dmg"
+  url "https://github.com/tukuyomil032/Glance/releases/download/v#{version}/glance-#{version}-#{arch}.dmg" do |asset_url|
+    asset_name = File.basename(asset_url)
+    release = GitHub::API.open_rest("https://api.github.com/repos/tukuyomil032/Glance/releases/tags/v#{version}")
+    asset = release.fetch('assets', []).find { |a| a['name'] == asset_name }
+    [asset['url'], { header: ['Accept: application/octet-stream',
+                              "Authorization: bearer #{GitHub::API.credentials}"] }]
+  end
   name 'glance'
   desc 'Quick Look extension for rendered Markdown previews'
   homepage 'https://github.com/tukuyomil032/Glance'
