@@ -16,7 +16,7 @@ jobs:
 
       - uses: ruby/setup-ruby@v1
         with:
-          ruby-version: '3.1'
+          ruby-version: '3.4'
           bundler-cache: true
 
       - name: Update glance cask if a new release exists
