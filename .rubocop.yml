@@ -9,6 +9,11 @@ AllCops:
 Style/StringLiterals:
   Enabled: true
   EnforcedStyle: single_quotes
+  Exclude:
+    - "Casks/**/*.rb"
+
+Style/TrailingCommaInArrayLiteral:
+  Enabled: false
 
 Metrics/BlockLength:
   Enabled: false
