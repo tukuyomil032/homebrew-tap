@@ -23,6 +23,7 @@ jobs:
           LIVECHECK=$(brew livecheck --cask tukuyomil032/tap/glance --json)
           echo "Livecheck: $LIVECHECK"
           CURRENT=$(echo "$LIVECHECK" | jq -r '.[0].version.current // ""')
+
           LATEST=$(echo "$LIVECHECK" | jq -r '.[0].version.latest // ""')
           echo "Current: $CURRENT, Latest: $LATEST"
           if [ -n "$LATEST" ] && [ "$CURRENT" != "$LATEST" ]; then
@@ -32,5 +33,6 @@ jobs:
             echo "No new version found, skipping bump-cask-pr."
           fi
         env:
-          HOMEBREW_GITHUB_API_TOKEN: ${{ secrets.HOMEBREW_PAT }}
+          HOMEBREW_GITHUB_API_TOKEN: ${{ github.token }}
+          GITHUB_TOKEN: ${{ github.token }}
           HOMEBREW_NO_AUTO_UPDATE: 1
