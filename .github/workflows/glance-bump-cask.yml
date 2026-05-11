@@ -68,7 +68,7 @@ jobs:
           ARM_SHA=$(sha256sum "${TMP_DIR}/${ARM_FILE}" | awk '{print $1}')
           INTEL_SHA=$(sha256sum "${TMP_DIR}/${INTEL_FILE}" | awk '{print $1}')
 
-          ruby <<'RUBY' "$CASK_FILE" "$LATEST" "$ARM_SHA" "$INTEL_SHA"
+          ruby - "$CASK_FILE" "$LATEST" "$ARM_SHA" "$INTEL_SHA" <<'RUBY'
           path, version, arm_sha, intel_sha = ARGV
           content = File.read(path)
 
