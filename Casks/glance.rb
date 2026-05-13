@@ -1,8 +1,8 @@
 cask "glance" do
   arch arm: "arm64", intel: "x86_64"
-  version "1.03"
-  sha256 arm:   "79fad43efe1bb194df7900bd40a4c2d81d4acfc782e71e1a74f91f4919297bda",
-         intel: "9fa83ea043866dc2333317aa26c5b32a20eef38ae166c2062d8efd72e2d8f674"
+  version "1.04"
+  sha256 arm:   "b8affe65cb9e961772530e583598163bfd18ad1e29d8bc5088b9a1205c47a613",
+         intel: "8cbc102b76db54ebc7678c20a8b69477dcb6c8737643b9eb4486f9dfc58f62f6"
 
   url "https://github.com/tukuyomil032/Glance/releases/download/v#{version}/glance-#{version}-#{arch}.dmg"
   name "glance"
