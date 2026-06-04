@@ -14,6 +14,7 @@ brew tap tukuyomil032/tap
 |-----|---------|
 | [MC-Vector](https://github.com/tukuyomil032/MC-Vector) — Minecraft server management desktop app | `brew install --cask mc-vector` |
 | [glance](https://github.com/tukuyomil032/Glance) — Quick Look extension for rendered Markdown previews | `brew install --cask glance` |
+| [Perch](https://github.com/tukuyomil032/Perch) — Dynamic Island-style live hub for macOS (beta) | `brew install --cask perch` |
 
 ### Uninstall
 
@@ -48,3 +49,6 @@ If macOS Gatekeeper blocks the app on first launch, right-click `MC-Vector.app` 
 
 glance is not notarized by Apple.
 After installing, launch `glance.app` once, enable it in System Settings → Privacy & Security → Extensions → Quick Look, then run `qlmanage -r` if Finder does not pick it up.
+
+Perch is not notarized by Apple.
+If macOS Gatekeeper blocks it on first launch, right-click `perch.app` → Open → Open. Perch runs as a menubar/overlay app — launch it after installation to see it in the menu bar.
