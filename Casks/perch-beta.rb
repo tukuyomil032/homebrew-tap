@@ -13,6 +13,12 @@ cask "perch-beta" do
 
   app "perch-beta.app"
 
+  postflight do
+    system_command "/usr/bin/xattr",
+                   args: ["-dr", "com.apple.quarantine", "#{appdir}/perch-beta.app"],
+                   sudo: false
+  end
+
   zap trash: [
     "~/Library/Application Support/com.tukuyomi032.perch",
     "~/Library/Caches/com.tukuyomi032.perch",
@@ -21,8 +27,9 @@ cask "perch-beta" do
 
   caveats <<~EOS
     perch-beta is not notarized by Apple.
-    If macOS Gatekeeper blocks the app on first launch:
-      right-click perch-beta.app > Open > Open.
+    If macOS Gatekeeper blocks the app after direct DMG install:
+      System Settings > Privacy & Security > "Open Anyway"
+      or: xattr -dr com.apple.quarantine /Applications/perch-beta.app
 
     perch-beta runs as a menubar/overlay app.
     Launch perch-beta.app after installation — it will appear in the menu bar.
