@@ -1,8 +1,8 @@
 cask "perch-beta" do
   arch arm: "arm64", intel: "x86_64"
-  version "0.3.0-beta-1"
-  sha256 arm:   "bf8d66f5fdb4bba1a55b19ea1fcfa96171b721075fd3a2d48b055ca636652465",
-         intel: "9bd3bb04ade3d11b5d0bc91e7b2ba25c1310d92ed8871753411075d1a5b66c22"
+  version "0.3.0-beta-3"
+  sha256 arm:   "22a4906c2245d0569777b64ea3e770c7706f12fbbd0cebd23ed7de787521ddfc",
+         intel: "38f8ffe85704d6b9c88bffccd583ad543ed554b1c4e8231f8b48f0f35565cbfc"
 
   url "https://github.com/tukuyomil032/Perch/releases/download/v#{version}/perch-#{version}-#{arch}.dmg"
   name "Perch Beta"
