@@ -80,6 +80,7 @@ jobs:
           raise 'Failed to update version line' unless version_updated
           raise 'Failed to update sha256 lines' unless sha_updated
 
+          content += "\n" unless content.end_with?("\n")
           File.write(path, content)
           RUBY
 
