@@ -46,7 +46,7 @@ jobs:
           fi
 
           echo "Current: ${CURRENT}"
-          echo "Latest: ${LATEST}"
+          echo "Latest:  ${LATEST}"
 
           if [ "$CURRENT" = "$LATEST" ]; then
             echo "No cask update required."
@@ -68,13 +68,12 @@ jobs:
           path, version, sha256 = ARGV
           content = File.read(path)
 
-          content.sub!(/^\s*version\s+"[^"]+"/, %(  version "#{version}"))
-          content.sub!(/^\s*sha256\s+"[^"]+"/, %(  sha256 "#{sha256}"))
+          version_updated = content.sub!(/^\s*version\s+"[^"]+"/, %(  version "#{version}"))
+          sha_updated     = content.sub!(/^\s*sha256\s+"[^"]+"/, %(  sha256 "#{sha256}"))
 
-          raise 'Failed to update version line' unless content.include?(%(version "#{version}"))
-          raise 'Failed to update sha256 line'  unless content.include?(%(sha256 "#{sha256}"))
+          raise 'Failed to update version line' unless version_updated
+          raise 'Failed to update sha256 line'  unless sha_updated
 
-          content += "\n" unless content.end_with?("\n")
           File.write(path, content)
           RUBY
 
