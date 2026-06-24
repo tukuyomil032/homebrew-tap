@@ -7,29 +7,99 @@ on:
 
 permissions:
   contents: write
-  pull-requests: write
 
 jobs:
   bump:
-    runs-on: macos-latest
+    runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
 
-      - uses: Homebrew/actions/setup-homebrew@main
+      - uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: '3.4'
+          bundler-cache: true
 
-      - name: Bump cask PR if new version found
-        run: |
-          LIVECHECK=$(brew livecheck --cask tukuyomil032/tap/mc-vector --json 2>/dev/null || echo '[]')
-          echo "Livecheck: $LIVECHECK"
-          CURRENT=$(echo "$LIVECHECK" | jq -r '.[0].version.current // ""')
-          LATEST=$(echo "$LIVECHECK" | jq -r '.[0].version.latest // ""')
-          echo "Current: $CURRENT, Latest: $LATEST"
-          if [ -n "$LATEST" ] && [ "$CURRENT" != "$LATEST" ]; then
-            echo "New version $LATEST found, bumping cask PR..."
-            brew bump-cask-pr tukuyomil032/tap/mc-vector --no-browse --no-fork --version "$LATEST"
-          else
-            echo "No new version found, skipping bump-cask-pr."
-          fi
+      - name: Update mc-vector cask if a new release exists
         env:
-          HOMEBREW_GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          HOMEBREW_NO_AUTO_UPDATE: 1
+          GITHUB_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+
+          REPO="tukuyomil032/MC-Vector"
+          CASK_FILE="Casks/mc-vector.rb"
+          API_URL="https://api.github.com/repos/${REPO}/releases/latest"
+
+          CURRENT=$(ruby -e "puts File.read(ARGV[0]).match(/^\\s*version\\s+[\"']([^\"']+)[\"']/)[1].to_s" "$CASK_FILE")
+          if [ -z "$CURRENT" ]; then
+            echo "Failed to read current version from ${CASK_FILE}" >&2
+            exit 1
+          fi
+
+          RESPONSE=$(curl -fsSL \
+            -H "Accept: application/vnd.github+json" \
+            -H "Authorization: Bearer ${GITHUB_TOKEN}" \
+            "$API_URL")
+          LATEST=$(printf '%s' "$RESPONSE" | jq -r '.tag_name // ""' | sed 's/^v//')
+          if [ -z "$LATEST" ] || [ "$LATEST" = "null" ]; then
+            echo "Failed to read latest release tag from ${API_URL}" >&2
+            exit 1
+          fi
+
+          echo "Current: ${CURRENT}"
+          echo "Latest:  ${LATEST}"
+
+          if [ "$CURRENT" = "$LATEST" ]; then
+            echo "No cask update required."
+            exit 0
+          fi
+
+          TMP_DIR=$(mktemp -d)
+          trap 'rm -rf "$TMP_DIR"' EXIT
+
+          ARM_FILE="MC-Vector_${LATEST}_aarch64.dmg"
+          INTEL_FILE="MC-Vector_${LATEST}_x64.dmg"
+          ARM_URL="https://github.com/${REPO}/releases/download/v${LATEST}/${ARM_FILE}"
+          INTEL_URL="https://github.com/${REPO}/releases/download/v${LATEST}/${INTEL_FILE}"
+
+          echo "Downloading ARM: ${ARM_URL}..."
+          curl -fL "$ARM_URL" -o "${TMP_DIR}/${ARM_FILE}"
+          SHA256_ARM=$(sha256sum "${TMP_DIR}/${ARM_FILE}" | awk '{print $1}')
+
+          echo "Downloading Intel: ${INTEL_URL}..."
+          curl -fL "$INTEL_URL" -o "${TMP_DIR}/${INTEL_FILE}"
+          SHA256_INTEL=$(sha256sum "${TMP_DIR}/${INTEL_FILE}" | awk '{print $1}')
+
+          ruby - "$CASK_FILE" "$LATEST" "$SHA256_ARM" "$SHA256_INTEL" <<'RUBY'
+          path, version, sha256_arm, sha256_intel = ARGV
+          content = File.read(path)
+
+          version_updated = content.sub!(/^\s*version\s+["'][^"']+["']/, %(  version "#{version}"))
+          sha_updated = content.sub!(
+            /^\s*sha256 arm:\s+["'][^"']+["'],\n\s*intel:\s+["'][^"']+["']/,
+            %(  sha256 arm:   "#{sha256_arm}",\n         intel: "#{sha256_intel}")
+          )
+
+          raise 'Failed to update version line' unless version_updated
+          raise 'Failed to update sha256 lines' unless sha_updated
+
+          File.write(path, content)
+          RUBY
+
+      - name: Verify cask formatting
+        run: bundle exec rubocop Casks/mc-vector.rb
+
+      - name: Commit and push if changed
+        run: |
+          set -euo pipefail
+
+          if git diff --quiet -- Casks/mc-vector.rb; then
+            echo "No changes to commit."
+            exit 0
+          fi
+
+          VERSION=$(ruby -e 'puts File.read(ARGV[0]).match(/^\s*version\s+"([^"]+)"/)[1]' Casks/mc-vector.rb)
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add Casks/mc-vector.rb
+          git commit -m "chore: bump mc-vector cask to v${VERSION}"
+          git push origin HEAD:main
