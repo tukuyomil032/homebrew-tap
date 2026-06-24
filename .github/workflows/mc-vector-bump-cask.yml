@@ -15,7 +15,7 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - uses: Homebrew/actions/setup-homebrew@master
+      - uses: Homebrew/actions/setup-homebrew@main
 
       - name: Bump cask PR if new version found
         run: |
@@ -26,7 +26,7 @@ jobs:
           echo "Current: $CURRENT, Latest: $LATEST"
           if [ -n "$LATEST" ] && [ "$CURRENT" != "$LATEST" ]; then
             echo "New version $LATEST found, bumping cask PR..."
-            brew bump-cask-pr tukuyomil032/tap/mc-vector --no-browse || true
+            brew bump-cask-pr tukuyomil032/tap/mc-vector --no-browse --version "$LATEST"
           else
             echo "No new version found, skipping bump-cask-pr."
           fi
