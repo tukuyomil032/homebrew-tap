@@ -1,9 +1,9 @@
 class Gitkeeper < Formula
   desc "Safe Git branch cleanup tool -- detects merged, stale, and upstream-gone branches"
   homepage "https://github.com/tukuyomil032/GitKeeper"
-  url "https://github.com/tukuyomil032/GitKeeper/archive/refs/tags/v0.0.21.tar.gz"
-  sha256 "fcd55ffee452df6e91cf8954bddb909adff852f268898739a1ec5d510e4e2aa1"
-  version "0.0.21"
+  url "https://github.com/tukuyomil032/GitKeeper/archive/refs/tags/v0.0.22.tar.gz"
+  sha256 "e1b7ee157163203bea94e13e97d6cda5325b9c87d98cf59a738207d80fb46450"
+  version "0.0.22"
   license "MIT"
 
   depends_on "jq"
