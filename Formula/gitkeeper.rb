@@ -1,9 +1,9 @@
 class Gitkeeper < Formula
   desc "Safe Git branch cleanup tool -- detects merged, stale, and upstream-gone branches"
   homepage "https://github.com/tukuyomil032/GitKeeper"
-  url "https://github.com/tukuyomil032/GitKeeper/archive/refs/tags/v0.0.19.tar.gz"
-  sha256 "19b3e2b5f9a8abccbdec45f226dee1a7049d7e32546fb6f292ddabb1fe566731"
-  version "0.0.19"
+  url "https://github.com/tukuyomil032/GitKeeper/archive/refs/tags/v0.0.20.tar.gz"
+  sha256 "280748183f2ec55b5bc3a6be96818d4270b3fd18f902a39dbd90876906b32571"
+  version "0.0.20"
   license "MIT"
 
   depends_on "jq"
@@ -24,6 +24,6 @@ class Gitkeeper < Formula
   end
 
   test do
-    assert_match "0.0.19", shell_output("#{bin}/gitkeeper --version")
+    assert_match "0.0.20", shell_output("#{bin}/gitkeeper --version")
   end
 end
