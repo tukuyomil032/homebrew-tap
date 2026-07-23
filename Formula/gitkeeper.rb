@@ -15,16 +15,18 @@ class Gitkeeper < Formula
   end
 
   def install
-    # Install lib/ and VERSION alongside the script in libexec so BASE_DIR resolves correctly
+    # Install lib/ and version.env alongside the script in libexec so BASE_DIR resolves correctly
     libexec.install "lib"
-    libexec.install "VERSION"
+    libexec.install "version.env"
     libexec.install "bin/gitkeeper"
     bin.install_symlink libexec / "gitkeeper"
+    bin.install_symlink libexec / "gitkeeper" => "gk"
 
     zsh_completion.install "completions/_gitkeeper"
   end
 
   test do
-    assert_match "0.0.21", shell_output("#{bin}/gitkeeper --version")
+    assert_match version.to_s, shell_output("#{bin}/gitkeeper --version")
+    assert_match version.to_s, shell_output("#{bin}/gk --version")
   end
 end
