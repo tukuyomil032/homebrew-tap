@@ -1,0 +1,92 @@
+name: Bump Formula (gitkeeper)
+
+on:
+  schedule:
+    - cron: '0 */6 * * *'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  bump:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: '3.4'
+          bundler-cache: true
+
+      - name: Update gitkeeper formula if a new release exists
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+
+          REPO="tukuyomil032/GitKeeper"
+          FORMULA_FILE="Formula/gitkeeper.rb"
+          API_URL="https://api.github.com/repos/${REPO}/releases/latest"
+
+          CURRENT=$(ruby -e 'puts File.read(ARGV[0])[/^\s*version\s+"([^"]+)"/, 1].to_s' "$FORMULA_FILE")
+          if [ -z "$CURRENT" ]; then
+            echo "Failed to read current version from ${FORMULA_FILE}" >&2
+            exit 1
+          fi
+
+          RESPONSE=$(curl -fsSL \
+            -H "Accept: application/vnd.github+json" \
+            -H "Authorization: Bearer ${GITHUB_TOKEN}" \
+            "$API_URL")
+          LATEST=$(printf '%s' "$RESPONSE" | jq -r '.tag_name // ""' | sed 's/^v//')
+          if [ -z "$LATEST" ] || [ "$LATEST" = "null" ]; then
+            echo "Failed to read latest release tag from ${API_URL}" >&2
+            exit 1
+          fi
+
+          echo "Current: ${CURRENT}"
+          echo "Latest: ${LATEST}"
+
+          if [ "$CURRENT" = "$LATEST" ]; then
+            echo "No formula update required."
+            exit 0
+          fi
+
+          TARBALL_URL="https://github.com/${REPO}/archive/refs/tags/v${LATEST}.tar.gz"
+          echo "Computing sha256 for ${TARBALL_URL}..."
+          SHA=$(curl -fsSL "$TARBALL_URL" | sha256sum | awk '{print $1}')
+
+          ruby - "$FORMULA_FILE" "$LATEST" "$SHA" <<'RUBY'
+          path, version, sha256 = ARGV
+          content = File.read(path)
+
+          version_updated = content.sub!(/^\s*version\s+"[^"]+"/, %(  version "#{version}"))
+          url_updated     = content.sub!(%r{/refs/tags/v[^/]+\.tar\.gz}, %(/refs/tags/v#{version}.tar.gz))
+          sha_updated     = content.sub!(/^\s*sha256\s+"[^"]+"/, %(  sha256 "#{sha256}"))
+
+          raise 'Failed to update version line' unless version_updated
+          raise 'Failed to update url line'     unless url_updated
+          raise 'Failed to update sha256 line'  unless sha_updated
+
+          File.write(path, content)
+          RUBY
+
+      - name: Verify formula formatting
+        run: bundle exec rubocop Formula/gitkeeper.rb
+
+      - name: Commit and push if changed
+        run: |
+          set -euo pipefail
+
+          if git diff --quiet -- Formula/gitkeeper.rb; then
+            echo "No changes to commit."
+            exit 0
+          fi
+
+          VERSION=$(ruby -e 'puts File.read(ARGV[0])[/^\s*version\s+"([^"]+)"/, 1].to_s' Formula/gitkeeper.rb)
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add Formula/gitkeeper.rb
+          git commit -m "chore: bump gitkeeper formula to v${VERSION}"
+          git push origin HEAD:main
