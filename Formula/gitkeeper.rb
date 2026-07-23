@@ -20,11 +20,13 @@ class Gitkeeper < Formula
     libexec.install "VERSION"
     libexec.install "bin/gitkeeper"
     bin.install_symlink libexec / "gitkeeper"
+    bin.install_symlink libexec / "gitkeeper" => "gk"
 
     zsh_completion.install "completions/_gitkeeper"
   end
 
   test do
-    assert_match "0.0.21", shell_output("#{bin}/gitkeeper --version")
+    assert_match version.to_s, shell_output("#{bin}/gitkeeper --version")
+    assert_predicate bin / "gk", :exist?
   end
 end
