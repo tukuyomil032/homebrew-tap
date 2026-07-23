@@ -27,6 +27,6 @@ class Gitkeeper < Formula
 
   test do
     assert_match version.to_s, shell_output("#{bin}/gitkeeper --version")
-    assert_predicate bin / "gk", :exist?
+    assert_match version.to_s, shell_output("#{bin}/gk --version")
   end
 end
