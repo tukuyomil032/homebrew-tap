@@ -13,7 +13,11 @@ homebrew-tap/
 │   └── <appname>-bump-cask.yml      # 追加アプリは同様の命名規則で追加
 ├── Casks/
 │   ├── mc-vector.rb                 # Homebrew Cask 定義
-│   └── perch@latest.rb              # pre-release チャンネル用 Cask
+│   ├── glance.rb                    # Homebrew Cask 定義
+│   ├── perch.rb                     # perch: stable チャンネル用 Cask
+│   └── perch@latest.rb              # perch: beta チャンネル用 Cask
+├── Formula/
+│   └── gitkeeper.rb                 # Homebrew Formula 定義
 ├── bucket/
 │   └── mc-vector.json               # Scoop マニフェスト定義
 ├── scripts/
