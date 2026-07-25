@@ -1,0 +1,12 @@
+{
+  "tag_name": "v1.2.0",
+  "draft": false,
+  "prerelease": false,
+  "published_at": "2026-07-01T00:00:00Z",
+  "assets": [
+    {
+      "name": "widget-1.2.0.zip",
+      "browser_download_url": "https://example.invalid/acme/widget/releases/download/v1.2.0/widget-1.2.0.zip"
+    }
+  ]
+}
