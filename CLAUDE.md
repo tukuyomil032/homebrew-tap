@@ -40,12 +40,20 @@ just install && just setup
 
 ## コード規約
 
-### Cask ファイル（Casks/*.rb）
+### Cask / Formula ファイル（Casks/*.rb, Formula/*.rb）
 
-- **文字列はシングルクォート使用**（`'mc-vector'` など）
-  - 式展開が必要な場合のみダブルクォートを使用（`"#{version}"` など）
+- **文字列はダブルクォート使用**（`"mc-vector"` など）
+  - 根拠: Homebrew 本体の `Library/.rubocop.yml` が `Style/StringLiterals: EnforcedStyle: double_quotes`
+    を強制しており、`brew style --cask` はシングルクォートを offense として報告する
+  - このリポジトリの `.rubocop.yml` は `Style/StringLiterals` の `Exclude` に `Casks/**/*.rb` と
+    `Formula/**/*.rb` を入れているため `bundle exec rubocop` は両形式を許すが、
+    配布先の Homebrew 公式スタイルに合わせてダブルクォートで書く
 - rubocop で静的解析を実施（`bundle exec rubocop`）
 - Homebrew 公式の Cask DSL に準拠
+
+### その他の Ruby ファイル（Gemfile など）
+
+- **文字列はシングルクォート使用**（`.rubocop.yml` の `Style/StringLiterals: EnforcedStyle: single_quotes`）
 
 ### Scoop マニフェスト（bucket/*.json）
 
