@@ -15,7 +15,7 @@ brew tap tukuyomil032/tap
 | [MC-Vector](https://github.com/tukuyomil032/MC-Vector) — Minecraft server management desktop app | `brew install --cask mc-vector` |
 | [glance](https://github.com/tukuyomil032/Glance) — Quick Look extension for rendered Markdown previews | `brew install --cask glance` |
 | [Perch](https://github.com/tukuyomil032/Perch) — Dynamic Island-style live hub for macOS（stable チャンネル） | 準備中（stable リリース未公開） |
-| [Perch](https://github.com/tukuyomil032/Perch) — 同上（beta チャンネル・beta を含む最新を追跡） | `brew install --cask perch@latest` |
+| [Perch](https://github.com/tukuyomil032/Perch) — 同上（beta チャンネル・pre-release を含む最新を追跡） | `brew install --cask perch@latest` |
 
 ### Uninstall
 
