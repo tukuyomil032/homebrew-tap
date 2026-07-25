@@ -97,6 +97,9 @@ jobs:
           SHA256=$(sha256sum "${TMP_DIR}/${ASSET_NAME}" | awk '{print $1}')
 
           ruby - "$CASK_FILE" "$VERSION" "$SHA256" <<'RUBY'
+          # Cask strings are double-quoted: Homebrew's own Library/.rubocop.yml sets
+          # Style/StringLiterals: EnforcedStyle: double_quotes, so `brew style --cask`
+          # rejects single quotes. Match and write that form only.
           path, version, sha256 = ARGV
           content = File.read(path)
 
