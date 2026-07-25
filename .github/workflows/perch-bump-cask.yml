@@ -8,9 +8,27 @@ on:
 permissions:
   contents: write
 
+# Both channels push to main, so never let two runs overlap.
+concurrency:
+  group: perch-bump-cask
+  cancel-in-progress: false
+
 jobs:
   bump:
+    name: bump ${{ matrix.channel }}
     runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      # Serialised so the second channel checks out the first one's push.
+      max-parallel: 1
+      matrix:
+        include:
+          - channel: stable
+            cask: Casks/perch.rb
+            token: perch
+          - channel: beta
+            cask: Casks/perch@latest.rb
+            token: perch@latest
     steps:
       - uses: actions/checkout@v4
 
@@ -19,52 +37,62 @@ jobs:
           ruby-version: '3.4'
           bundler-cache: true
 
-      - name: Update perch cask if a new release exists
+      # Exits 0 with skip=true when the channel has nothing to track, which is
+      # the normal state of the stable channel until Perch ships a stable
+      # release. The reason is logged to stderr.
+      - name: Resolve the ${{ matrix.channel }} release
+        id: resolve
         env:
           GITHUB_TOKEN: ${{ github.token }}
         run: |
           set -euo pipefail
 
-          REPO="tukuyomil032/Perch"
-          CASK_FILE="Casks/perch.rb"
-          API_URL="https://api.github.com/repos/${REPO}/releases/latest"
+          scripts/resolve-release.sh \
+            --repo tukuyomil032/Perch \
+            --channel '${{ matrix.channel }}' \
+            --asset-template 'perch-{version}.dmg' >> "$GITHUB_OUTPUT"
 
+      - name: Compare against the cask
+        id: compare
+        if: steps.resolve.outputs.skip == 'false'
+        run: |
+          set -euo pipefail
+
+          CASK_FILE='${{ matrix.cask }}'
           CURRENT=$(ruby -e 'puts File.read(ARGV[0])[/^\s*version\s+"([^"]+)"/, 1].to_s' "$CASK_FILE")
           if [ -z "$CURRENT" ]; then
             echo "Failed to read current version from ${CASK_FILE}" >&2
             exit 1
           fi
 
-          RESPONSE=$(curl -fsSL \
-            -H "Accept: application/vnd.github+json" \
-            -H "Authorization: Bearer ${GITHUB_TOKEN}" \
-            "$API_URL")
-          LATEST=$(printf '%s' "$RESPONSE" | jq -r '.tag_name // ""' | sed 's/^v//')
-          if [ -z "$LATEST" ] || [ "$LATEST" = "null" ]; then
-            echo "Failed to read latest release tag from ${API_URL}" >&2
-            exit 1
-          fi
-
+          LATEST='${{ steps.resolve.outputs.version }}'
           echo "Current: ${CURRENT}"
           echo "Latest:  ${LATEST}"
 
           if [ "$CURRENT" = "$LATEST" ]; then
             echo "No cask update required."
-            exit 0
+            echo 'changed=false' >> "$GITHUB_OUTPUT"
+          else
+            echo 'changed=true' >> "$GITHUB_OUTPUT"
           fi
+
+      - name: Update the cask
+        if: steps.compare.outputs.changed == 'true'
+        env:
+          ASSET_NAME: ${{ steps.resolve.outputs.asset_name }}
+          ASSET_URL: ${{ steps.resolve.outputs.asset_url }}
+          VERSION: ${{ steps.resolve.outputs.version }}
+        run: |
+          set -euo pipefail
 
           TMP_DIR=$(mktemp -d)
           trap 'rm -rf "$TMP_DIR"' EXIT
 
-          DMG_FILE="perch-${LATEST}.dmg"
-          DMG_URL="https://github.com/${REPO}/releases/download/v${LATEST}/${DMG_FILE}"
+          echo "Downloading ${ASSET_URL}..."
+          curl -fL "$ASSET_URL" -o "${TMP_DIR}/${ASSET_NAME}"
+          SHA256=$(sha256sum "${TMP_DIR}/${ASSET_NAME}" | awk '{print $1}')
 
-          echo "Downloading ${DMG_URL}..."
-          curl -fL "$DMG_URL" -o "${TMP_DIR}/${DMG_FILE}"
-
-          SHA256=$(sha256sum "${TMP_DIR}/${DMG_FILE}" | awk '{print $1}')
-
-          ruby - "$CASK_FILE" "$LATEST" "$SHA256" <<'RUBY'
+          ruby - '${{ matrix.cask }}' "$VERSION" "$SHA256" <<'RUBY'
           path, version, sha256 = ARGV
           content = File.read(path)
 
@@ -78,20 +106,26 @@ jobs:
           RUBY
 
       - name: Verify cask formatting
-        run: bundle exec rubocop Casks/perch.rb
+        if: steps.compare.outputs.changed == 'true'
+        run: bundle exec rubocop '${{ matrix.cask }}'
 
-      - name: Commit and push if changed
+      # Guarded on main so a workflow_dispatch from a feature branch can be
+      # exercised without pushing to main.
+      - name: Commit and push
+        if: steps.compare.outputs.changed == 'true' && github.ref == 'refs/heads/main'
         run: |
           set -euo pipefail
 
-          if git diff --quiet -- Casks/perch.rb; then
+          CASK_FILE='${{ matrix.cask }}'
+          if git diff --quiet -- "$CASK_FILE"; then
             echo "No changes to commit."
             exit 0
           fi
 
-          VERSION=$(ruby -e 'puts File.read(ARGV[0])[/^\s*version\s+"([^"]+)"/, 1].to_s' Casks/perch.rb)
+          VERSION=$(ruby -e 'puts File.read(ARGV[0])[/^\s*version\s+"([^"]+)"/, 1].to_s' "$CASK_FILE")
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add Casks/perch.rb
-          git commit -m "chore: bump perch cask to v${VERSION}"
+          git add "$CASK_FILE"
+          git commit -m "chore: bump ${{ matrix.token }} cask to v${VERSION}"
+          git pull --rebase origin main
           git push origin HEAD:main
