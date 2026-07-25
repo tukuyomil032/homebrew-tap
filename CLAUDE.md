@@ -85,7 +85,7 @@ perch は `scripts/resolve-release.sh` 経由でチャンネルごとにバー�
 
 Homebrew 公式の `claude-code` / `claude-code@latest` と同じ命名に従う。
 
-1. `Casks/<appname>.rb`（stable）と `Casks/<appname>@latest.rb`（pre-release を含む最新）を用意する
+1. `Casks/<appname>.rb`（stable）と `Casks/<appname>@latest.rb`（pre-release を含む最新（perch は beta のみ））を用意する
 2. `@latest` 側に `conflicts_with cask: "<appname>"` を書く（同じ app を置くため排他）
 3. `@latest` の `livecheck` は `strategy :github_releases` を**ブロック形式**で使う。既定のパスは pre-release を除外してしまうため、`json` を自分で filter する必要がある
 4. bump ワークフローは `channel` / `cask` / `token` の matrix にし、`scripts/resolve-release.sh` でバージョンを解決する。両ジョブが `main` へ push するので `max-parallel: 1` と `concurrency` を付ける

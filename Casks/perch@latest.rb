@@ -9,8 +9,12 @@ cask "perch@latest" do
 
   livecheck do
     url "https://github.com/tukuyomil032/Perch"
-    # Matches both tag forms Perch has shipped: v0.3.0-beta-5 from the old
-    # hand-tagged flow and v0.3.1-beta.6 from the current release workflow.
+    # Upstream Perch only publishes stable and beta channels (see
+    # scripts/resolve-release.py, which accepts only those two channel
+    # names), so alpha and rc tags never exist. This regex intentionally
+    # targets plain tags and beta tags only, and matches both beta forms
+    # Perch has shipped: v0.3.0-beta-5 from the old hand-tagged flow and
+    # v0.3.1-beta.6 from the current release workflow.
     regex(/^v?(\d+(?:\.\d+)+(?:[.-]beta[.-]\d+)?)$/i)
     # The default :github_releases path drops every pre-release, which is the
     # opposite of what this cask tracks, so the JSON is filtered here instead.
@@ -38,7 +42,8 @@ cask "perch@latest" do
   ]
 
   caveats <<~EOS
-    perch@latest follows the newest release, pre-releases included.
+    perch@latest follows the newest release, including beta pre-releases
+    (tags matching vX.Y.Z or vX.Y.Z-beta.N).
     Expect beta-quality builds; switch to the perch cask once a stable
     release is available.
 
