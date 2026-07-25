@@ -13,6 +13,13 @@ fix:
 fix-all:
     bundle exec rubocop --autocorrect-all Casks/ Formula/
 
+# scripts/ のシェルスクリプトを bats-core でテスト（要: brew install bats-core）
+test:
+    bats tests/
+
+# lint と test をまとめて実行
+check: lint test
+
 # Git フックをインストール（初回セットアップ時に実行）
 setup:
     bunx lefthook install

@@ -1,0 +1,49 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  bats:
+    name: bats
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+
+      # Pinned to a commit because this is a third-party action.
+      - name: Install bats
+        uses: bats-core/bats-action@77d6fb60505b4d0d1d73e48bd035b55074bbfb43 # 4.0.0
+        with:
+          bats-version: '1.14.0'
+          # The suite sticks to plain `[ ... ]` assertions, so none of the
+          # bats-libs are needed.
+          support-install: false
+          assert-install: false
+          detik-install: false
+          file-install: false
+
+      - name: Run tests
+        run: bats tests/
+
+  rubocop:
+    name: rubocop
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+
+      - uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: '3.4'
+          bundler-cache: true
+
+      - name: Lint casks and formulae
+        run: bundle exec rubocop Casks/ Formula/

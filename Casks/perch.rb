@@ -12,7 +12,7 @@ cask "perch" do
     strategy :github_latest
   end
 
-  depends_on macos: ">= :sonoma"
+  depends_on macos: :sonoma
 
   app "perch.app"
 
@@ -23,6 +23,11 @@ cask "perch" do
   ]
 
   caveats <<~EOS
+    The stable channel has no published release yet, so this cask cannot be
+    installed. Until the first stable release ships, use the pre-release
+    channel instead:
+      brew install --cask tukuyomil032/tap/perch@latest
+
     perch is not notarized by Apple.
     If macOS Gatekeeper blocks the app on first launch:
       right-click perch.app > Open > Open.
