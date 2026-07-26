@@ -1,0 +1,7 @@
+{
+  indent: 2
+  indent_char: "space"
+  line_length: 100
+  margin: 1
+  exclude: [".git/**", "target/**", "vendor/**"]
+}

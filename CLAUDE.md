@@ -71,7 +71,7 @@ just install && just setup
 - **macOS**: GitHub Actions（`<appname>-bump-cask.yml`）が6時間ごとに GitHub Releases API を確認、新バージョン検出時は `Casks/<appname>.rb` の `version` / `sha256` を書き換えて `main` へコミット（`brew bump-cask-pr` は使っていない）
 - **Windows**: GitHub Actions（`<appname>-update-scoop.yml`）が6時間ごとに GitHub Releases API を確認、新バージョン検出時は `bucket/<appname>.json` を直接更新し `main` へコミット
 
-perch は `scripts/resolve-release.sh` 経由でチャンネルごとにバージョンを解決する。他のアプリはワークフロー内にロジックがインラインで書かれている。
+perch は `scripts/resolve-release.sh` 経由でチャンネルごとにバージョンを解決する。他のアプリはワークフロー内にロジックがインラインで書かれている。`resolve-release.sh` は既存の呼び出し契約を保つNuShellラッパーで、実装本体は同じディレクトリの `resolve-release.nu` にある。実行環境には `nu` が必要。
 
 ### 新アプリ追加時
 
