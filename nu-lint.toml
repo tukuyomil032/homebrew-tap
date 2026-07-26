@@ -1,0 +1,17 @@
+sequential = false
+pipeline_placement = "start"
+max_pipeline_length = 100
+skip_external_parse_errors = true
+explicit_optional_access = false
+max_function_body_statements = 40
+max_inlinable_pipeline_elements = 2
+
+[groups]
+runtime-errors = "warning"
+type-safety = "warning"
+idioms = "warning"
+filesystem = "warning"
+dead-code = "warning"
+
+[rules]
+remove_hat_not_builtin = "off"

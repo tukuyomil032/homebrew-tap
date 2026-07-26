@@ -1,5 +1,9 @@
 pre-commit:
   jobs:
+    - name: format-lint-nushell
+      glob: "scripts/*.nu"
+      run: nufmt --config nufmt.nuon scripts && nu-lint --config nu-lint.toml scripts
+      stage_fixed: true
     - name: rubocop
       glob: "Casks/*.rb"
       run: bundle exec rubocop --force-exclusion {staged_files}
