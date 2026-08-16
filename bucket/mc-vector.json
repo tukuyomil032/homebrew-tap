@@ -1,10 +1,10 @@
 {
-  "version": "2.0.57",
+  "version": "2.0.58",
   "description": "Minecraft server management desktop app",
   "homepage": "https://github.com/tukuyomil032/MC-Vector",
   "license": "Proprietary",
-  "url": "https://github.com/tukuyomil032/MC-Vector/releases/download/v2.0.57/MC-Vector_2.0.57_windows-x86_64-setup.exe",
-  "hash": "da0dd7386e1b302e904c88b642916e8202b9ff6d50a62890f6e10d419128cc52",
+  "url": "https://github.com/tukuyomil032/MC-Vector/releases/download/v2.0.58/MC-Vector_2.0.58_windows-x86_64-setup.exe",
+  "hash": "aac0e7246fd24eeeeb52fa04e1366c58bbff1fc9eb27f7e5a37a471fe7659428",
   "installer": {
     "script": [
       "$installer = Get-Item \"$dir\\MC-Vector_*_windows-x86_64-setup.exe\"",
