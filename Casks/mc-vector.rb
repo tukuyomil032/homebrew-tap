@@ -1,8 +1,8 @@
 cask 'mc-vector' do
   arch arm: 'aarch64', intel: 'x64'
-  version "2.0.58"
-  sha256 arm:   "c2a46e375473ac307b756e5a11f203ecbc53d6306545f09b13c04f3c9794c031",
-         intel: "2a4f90e7a2794a4871d6dc8f216a40a35811f40fd6f5b85b293b8287b591de21"
+  version "2.0.59"
+  sha256 arm:   "e2c282b4c01f2c1a765477159502b2f9cd37ffc498341bb2ae8d2578a5cfc1ff",
+         intel: "68e46738979ce4331d73d660f01eeec39e221f56b2befb0b035b286f6fb2f4b8"
 
   url "https://github.com/tukuyomil032/MC-Vector/releases/download/v#{version}/MC-Vector_#{version}_#{arch}.dmg"
   name 'MC-Vector'
